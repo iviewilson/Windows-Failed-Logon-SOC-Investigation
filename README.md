@@ -182,3 +182,67 @@ Process telemetry was reviewed around the authentication timeline. The observed 
 Five user-account-change events were identified for the investigated endpoint. Three occurred around 15:38 and two additional events occurred around 15:57, shortly after the failed-logon cluster.
 
 ![Account Change Events](evidence/05-account-change-events.png)
+
+
+## Incident Disposition
+
+**Classification:** Suspicious Activity — Insufficient Evidence of Compromise
+
+The investigation identified a short cluster of failed interactive authentication events together with nearby account-change telemetry. However, the available evidence did not establish that the activity resulted from a remote attacker or that an account was successfully compromised.
+
+Key factors influencing the disposition included:
+
+- Four Event ID 4625 failures occurred within approximately 15 seconds.
+- The observed authentication source was `127.0.0.1`, providing no evidence of a remote source.
+- A separate Logon Type 4 failure was associated with Dell SupportAssist and was not grouped with the primary interactive-logon cluster.
+- No Event ID 4740 account lockout was identified during the investigated window.
+- Event ID 4688 analysis identified `services.exe` spawning `svchost.exe`, but the reviewed telemetry did not establish malicious execution.
+- Event ID 4738 account-change activity occurred near the authentication timeline, but the available telemetry did not establish what specific account attributes changed or prove a causal relationship with the failed logons.
+- No evidence was identified in the scoped investigation of new-account creation or privileged-group modification associated with the activity.
+
+The incident was therefore documented as suspicious authentication and account activity requiring correlation, but the available evidence was insufficient to classify it as a confirmed compromise.
+
+## Analyst Recommendations
+
+For a production SOC environment, the following actions would improve investigation and detection capability:
+
+1. Continue monitoring the affected endpoint and account for additional authentication anomalies.
+2. Correlate Event IDs 4625 and 4624 to determine whether repeated failures are followed by successful authentication.
+3. Enrich authentication telemetry with source-host and network data where available.
+4. Monitor Event IDs 4720, 4732, 4738 and 4740 for account creation, privileged-group membership changes, account modification and lockout activity.
+5. Retain detailed process-creation telemetry and command-line information to strengthen post-authentication investigation.
+6. Establish detection thresholds for repeated failed authentication attempts while accounting for legitimate application and service activity.
+
+## MITRE ATT&CK Context
+
+The investigation considered whether the authentication pattern could be consistent with credential-access or account-access techniques such as password guessing.
+
+**T1110 — Brute Force** was considered during triage because of the clustered authentication failures. However, the available evidence was insufficient to conclude that brute force occurred.
+
+This mapping is therefore investigative context rather than confirmation that the technique was executed.
+
+## Skills Demonstrated
+
+- SIEM threat hunting with Wazuh
+- Windows Security Event analysis
+- Authentication-event triage
+- Event timeline reconstruction
+- Cross-event correlation
+- Windows process analysis
+- Account-management event investigation
+- False-positive and benign-activity differentiation
+- Evidence-based incident classification
+- MITRE ATT&CK contextual mapping
+- SOC investigation documentation
+
+## Tools & Technologies
+
+`Wazuh SIEM` `Windows 11` `Windows Security Logs` `MITRE ATT&CK` `GitHub`
+
+---
+
+### Case Status
+
+**SOC-IR-002 — Investigation Complete**
+
+**Final Disposition:** Suspicious Activity — Insufficient Evidence of Compromise
