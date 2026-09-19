@@ -147,3 +147,38 @@ The investigation did not identify evidence in the scoped telemetry of:
 - Clearly suspicious post-authentication process execution
 
 These negative findings were considered alongside the authentication and account-change telemetry when determining the final incident disposition.
+
+
+## Investigation Evidence
+
+The following screenshots document the key telemetry used during the investigation.
+
+### Evidence 1 — Failed Logon Cluster
+
+Wazuh identified five failed-logon alerts during the investigation window. Four events occurred within approximately 15 seconds, creating the primary authentication cluster investigated in this case.
+
+![Failed Logon Cluster](evidence/01-failed-logon-cluster.png)
+
+### Evidence 2 — Event ID 4625 Details
+
+Detailed review of the failed authentication telemetry showed Windows Security Event ID 4625, including authentication status information and endpoint process context.
+
+![Failed Logon Details](evidence/02-failed-logon-details.png)
+
+### Evidence 3 — Separate Logon Type 4 Activity
+
+A separate failed authentication event showed Logon Type 4 with `Advapi` and Dell SupportAssist process context. Because its characteristics differed from the four interactive failures, it was analyzed separately from the primary cluster.
+
+![SupportAssist Logon Type 4](evidence/03-supportassist-logon-type-4.png)
+
+### Evidence 4 — Process Creation Correlation
+
+Process telemetry was reviewed around the authentication timeline. The observed process creation showed `svchost.exe` launched with `services.exe` as its parent process.
+
+![Process Creation Correlation](evidence/04-process-creation-correlation.png)
+
+### Evidence 5 — Account Change Activity
+
+Five user-account-change events were identified for the investigated endpoint. Three occurred around 15:38 and two additional events occurred around 15:57, shortly after the failed-logon cluster.
+
+![Account Change Events](evidence/05-account-change-events.png)
